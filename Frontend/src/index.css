@@ -1,0 +1,41 @@
+input[type=range] {
+    /* Hide the default thumb */
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+input[type=range]::-webkit-slider-thumb {
+    width: 24px;
+    /* Increase width */
+    height: 24px;
+    /* Increase height */
+    border-radius: 50%;
+    background: #4a90e2;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+    /* Smooth transition */
+}
+
+input[type=range]::-moz-range-thumb {
+    width: 24px;
+    /* Increase width */
+    height: 24px;
+    /* Increase height */
+    border-radius: 50%;
+    background: #4a90e2;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+    /* Smooth transition */
+}
+
+input[type=range]::-ms-thumb {
+    width: 24px;
+    /* Increase width */
+    height: 24px;
+    /* Increase height */
+    border-radius: 50%;
+    background: #4a90e2;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+    /* Smooth transition */
+}
