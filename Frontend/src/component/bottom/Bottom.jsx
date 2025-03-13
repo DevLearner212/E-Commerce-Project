@@ -13,7 +13,7 @@ export default function Bottom() {
     const getSellerProduct = useCallback(async () => {
         setLoading(true); // Set loading to true before the request
         try {
-            const response = await axios.get("http://localhost:3000/api/v1/onsko/getAllproducts");
+            const response = await axios.get("/api/getAllproducts");
             setProduct(response.data);
         } catch (error) {
             console.error(error.message);

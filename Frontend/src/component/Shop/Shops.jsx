@@ -29,7 +29,7 @@ export default function Shops() {
 
     const getAllproducts = useCallback(async () => {
         try {
-            const response = await axios.get("http://localhost:3000/api/v1/onsko/getAllproducts")
+            const response = await axios.get("/api/getAllproducts")
 
 
             setproduct(response.data)

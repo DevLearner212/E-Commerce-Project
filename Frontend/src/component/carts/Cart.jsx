@@ -15,7 +15,7 @@ export default function Cart() {
     const getcart = useCallback(async () => {
         try {
             const token = JSON.parse(localStorage.getItem("token"))
-            const response = await axios.get("http://localhost:3000/api/v1/onsko/getcart", {
+            const response = await axios.get("/api/getcart", {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                 },

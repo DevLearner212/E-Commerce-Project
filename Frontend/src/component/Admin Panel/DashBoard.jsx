@@ -10,7 +10,7 @@ export default function DashBoard() {
 
     const getAllproducts = useCallback(async () => {
         try {
-            const response = await axios.get("http://localhost:3000/api/v1/onsko/getAllproducts")
+            const response = await axios.get("/api/getAllproducts")
 
 
             setproduct(response.data)
@@ -23,7 +23,7 @@ export default function DashBoard() {
         try {
             setshowProduct(true)
             setshowProductList(prev => !prev)
-            const response = await axios.get(`http://localhost:3000/api/v1/onsko/getProductById/${id}`)
+            const response = await axios.get(`/api/getProductById/${id}`)
 
             console.log(response.data)
             setproductOverview(response.data)

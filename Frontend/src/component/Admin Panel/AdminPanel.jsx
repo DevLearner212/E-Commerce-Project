@@ -49,7 +49,7 @@ export default function AdminPanel() {
             formData.append('image', image); // Add the Blob to FormData
             formData.append('category', category); // Add the Blob to FormData
 
-            const response = await axios.post("http://localhost:3000/api/v1/onsko/productadd", formData)
+            const response = await axios.post("/api/productadd", formData)
             if (response.data.success == true) {
                 navigate("/shop")
             }

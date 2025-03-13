@@ -24,7 +24,7 @@ export default function ProductsBuy() {
     const handleRating = async (newRating) => {
         setRating(newRating);
         try {
-            const response = await axios.post(`http://localhost:3000/api/v1/onsko/updaterating/${id}`, { rating: newRating })
+            const response = await axios.post(`/api/updaterating/${id}`, { rating: newRating })
             if (response.data.sucess == true) {
                 alert("done rating..")
             }

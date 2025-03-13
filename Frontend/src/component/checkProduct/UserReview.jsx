@@ -19,7 +19,7 @@ export default function UserReview() {
         }
 
         try {
-            const response = await axios.post(`http://localhost:3000/api/v1/onsko/uploadReview/${id}`, { review })
+            const response = await axios.post(`/api/uploadReview/${id}`, { review })
             if (response.data.sucess == true) {
                 alert(" Review Submitted..")
             }

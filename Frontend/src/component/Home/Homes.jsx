@@ -11,7 +11,7 @@ export default function Homes() {
 
     const getuser = useCallback(async (token) => {
         try {
-            const response = await axios.post(`http://localhost:3000/api/v1/onsko/getuser`, { token });
+            const response = await axios.post(` /api/getuser`, { token });
             console.log(response)
             setProfileImage(response?.data?.profileImage);
         } catch (error) {

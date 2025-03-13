@@ -18,7 +18,7 @@ const Voice = () => {
         if (!searchTerm) return;
 
         try {
-            const response = await axios.get(`http://localhost:3000/api/v1/onsko/getProducts/${searchTerm}`);
+            const response = await axios.get(`/api/getProducts/${searchTerm}`);
             console.log(response.data);
             setProduct(response.data?.[searchTerm]);
         } catch (error) {

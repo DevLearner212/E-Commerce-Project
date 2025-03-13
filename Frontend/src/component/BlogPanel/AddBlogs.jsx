@@ -1,9 +1,11 @@
 import React, { useState } from 'react'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom';
+import { ArrowBigDown, ArrowDown } from 'lucide-react';
+import Header from '../Headers/Header';
 export default function AddBlogs() {
     const navigate = useNavigate()
-    const [imageSrc, setImageSrc] = useState('https://dummyimage.com/720x600');
+    const [imageSrc, setImageSrc] = useState("/public/Big/itemsIcons.png");
     const [headlines, setheadlines] = useState();
     const [bio, setbio] = useState();
     const [ImageFile, setImageFile] = useState();
@@ -18,7 +20,7 @@ export default function AddBlogs() {
                 formData.append('ImageFile', ImageFile);
             }
 
-            const response = await axios.post("http://localhost:3000/api/v1/onsko/blogs", formData)
+            const response = await axios.post("/api/blogs", formData)
             if (response.data?.success == true) {
                 navigate("/blog")
             }
@@ -46,6 +48,7 @@ export default function AddBlogs() {
 
     return (
         <>
+ 
             <section className="text-gray-600 body-font">
                 <div className="container mx-auto flex flex-col px-5 py-24 justify-center items-center">
                     <h1 className="title-font sm:text-4xl text-3xl mb-4 font-medium text-gray-900">
@@ -55,7 +58,7 @@ export default function AddBlogs() {
                         Upload your experience related to the product you purchased. We value your feedback and want to hear about your journey!
                     </p>
                     <div className="w-full md:w-2/3 flex flex-col mb-16 items-center text-center relative">
-
+                        <span className='flex justify-center items-center mb-1'>Click on Bag <ArrowDown/> </span>
                         <input
                             type="file"
                             id="fileInput"
@@ -66,7 +69,8 @@ export default function AddBlogs() {
                         <img
                             className="lg:w-2/6 md:w-3/6 w-5/6 mb-10 object-cover object-center rounded cursor-pointer"
                             alt="hero"
-                            src={imageSrc}
+                            src={imageSrc} 
+                          
                             onClick={handleImageClick}
                         />
                         <div className="flex w-full justify-center items-end">

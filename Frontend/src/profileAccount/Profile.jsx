@@ -14,7 +14,7 @@ export default function Profile() {
     }, [navigate])
     const removeAccound = async () => {
         try {
-            const response = await axios.post("http://localhost:3000/api/v1/onsko/logout")
+            const response = await axios.post("/api/logout")
 
             if (response.data?.success == true) {
                 localStorage.removeItem('token');
@@ -43,45 +43,31 @@ export default function Profile() {
                         Logout
                     </button>
                 </div>
-                <div className="grid mt-10 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 w-full h-full">
-                    <div
-                        className="bg-gray-200  w-72 h-60 p-4 rounded shadow flex flex-col gap-5 items-center justify-center"
-                    >
-                        <img src="https://cdn-icons-png.flaticon.com/128/4525/4525015.png" alt="" />
-                        <h1>Your Account</h1>
-                    </div>
-                    <div
-                        className="bg-gray-200  w-72 h-60 p-4 rounded shadow flex flex-col gap-5 items-center justify-center"
-                    >
-                        <img src="https://cdn-icons-png.flaticon.com/128/5530/5530389.png" alt="" />
-                        <h1>Your Orders</h1>
-                    </div>
-                    <div
-                        className="bg-gray-200  w-72 h-60 p-4 rounded shadow flex flex-col gap-5 items-center justify-center"
-                    >
-                        <img src="https://cdn-icons-png.flaticon.com/128/5735/5735325.png" alt="" />
-                        <h1>Your Wishlist</h1>
-                    </div>
-                    <div onClick={() => navigate("/subscription")}
-                        className="bg-gray-200  w-72 h-60 p-4 rounded shadow flex flex-col gap-5 items-center justify-center"
-                    >
-                        <img src="https://cdn-icons-png.flaticon.com/128/5836/5836060.png" alt="" />
-                        <h1>Your Subscription</h1>
-                    </div>
-                    <div
-                        className="bg-gray-200   w-72 h-60 p-4 rounded shadow flex flex-col gap-5 items-center justify-center"
-                    >
-                        <img src="https://cdn-icons-png.flaticon.com/128/11649/11649679.png" alt="" />
-                        <h1>Your Thrills</h1>
-                    </div>
-                    <div onClick={() => navigate("/blogpost")}
-                        className="bg-gray-200   w-72 h-60 p-4 rounded shadow flex flex-col gap-5 items-center justify-center"
-                    >
-                        <img src="https://cdn-icons-png.flaticon.com/128/3959/3959542.png" alt="" />
-                        <h1>  Feedback</h1>
-                    </div>
+                <div className="grid   p-8 mt-10 gap-4 w-full h-full
+                grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+  
+  <div className="bg-gray-200 w-full sm:w-60 md:w-72 h-60 p-4 rounded shadow flex flex-col gap-5 items-center justify-center">
+    <img src="https://cdn-icons-png.flaticon.com/128/5530/5530389.png" alt="Your Orders" />
+    <h1>Your Orders History</h1>
+  </div>
 
-                </div>
+  <div onClick={() => navigate("/cart")} className="bg-gray-200 w-full sm:w-60 md:w-72 h-60 p-4 rounded shadow flex flex-col gap-5 items-center justify-center">
+    <img src="https://cdn-icons-png.flaticon.com/128/5735/5735325.png" alt="Your Wishlist" />
+    <h1>Your Wishlist</h1>
+  </div>
+
+  <div onClick={() => navigate("/subscription")} className="bg-gray-200 w-full sm:w-60 md:w-72 h-60 p-4 rounded shadow flex flex-col gap-5 items-center justify-center">
+    <img src="https://cdn-icons-png.flaticon.com/128/5836/5836060.png" alt="Your Subscription" />
+    <h1>Your Subscription</h1>
+  </div>
+
+  <div onClick={() => navigate("/blogpost")} className="bg-gray-200 w-full sm:w-60 md:w-72 h-60 p-4 rounded shadow flex flex-col gap-5 items-center justify-center">
+    <img src="https://cdn-icons-png.flaticon.com/128/3959/3959542.png" alt="Feedback" />
+    <h1>Write your Feedback</h1>
+  </div>
+
+</div>
+
             </div>
         </>
     )

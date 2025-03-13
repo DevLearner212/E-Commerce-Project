@@ -585,29 +585,46 @@ const updateProductRating = async (req, res) => {
 
 const uploadReview = async (req, res) => {
     try {
-        const { id } = req.params;
+        const { id } = req.params; // Product ID
         const { review } = req.body;
+        const user = req.user; // Assuming you're using auth middleware to attach user to req
 
         if (!id) {
-            return res.json({ message: "Id not found", success: false });
+            return res.json({ message: "Product ID not found", success: false });
         }
 
-        if (review === ' ' || review === null) {
+        if (!review || review.trim() === "") {
             return res.json({ message: "Review not provided", success: false });
         }
 
-        const product = await Product.findByIdAndUpdate(id, { reviews: review }, { new: true });
+        if (!user) {
+            return res.status(401).json({ message: "Unauthorized", success: false });
+        }
+
+        const product = await Product.findById(id);
 
         if (!product) {
             return res.json({ message: "Product not found", success: false });
         }
 
-        res.json({ message: "Review updated successfully", success: true });
+        // Add new review
+        const newReview = {
+            user: user._id,
+            name: user.name,
+            review: review,
+            date: new Date()
+        };
+
+        product.reviews.push(newReview);
+
+        await product.save();
+
+        res.json({ message: "Review added successfully", success: true, product });
     } catch (error) {
-        console.log(error.message);
+        console.error(error.message);
         res.status(500).json({ message: "Something went wrong", success: false });
     }
+};
 
-}
 
 export { login, logout, uploadReview, signin, paypalpayment, verifyPayment, updateProductRating, removeallcart, getuser, productStore, createCart, removecart, blogspost, getproducts, getblogs, getAllProducts, getProductById, getcategory, getcart, admin }
