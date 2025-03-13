@@ -12,7 +12,7 @@ import Blog from './component/blogs/Blog.jsx';
 import Cart from './component/carts/Cart.jsx';
 import ProductsBuy from './component/checkProduct/ProductsBuy.jsx';
 import Profile from './profileAccount/Profile.jsx';
-import AddBlogs from './component/BlogPanel/addBlogs.jsx';
+ 
 import AdminPanel from './component/Admin Panel/AdminPanel.jsx';
 import DashBoard from './component/Admin Panel/DashBoard.jsx';
 import PriceSection from './component/Subscription/PriceSection.jsx';
@@ -20,6 +20,7 @@ import Voice from './component/AI/Voice.jsx';
 import PaymentPage from './Stripe/PaymentPage.jsx';
 import SignIn from './component/SignContainer/SignIn.jsx';
 import Login from './component/LoginContainer/Login.jsx';
+import AddBlogs from './component/BlogPanel/addBlogs.jsx';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
