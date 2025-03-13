@@ -20,7 +20,7 @@ import Voice from './component/AI/Voice.jsx';
 import PaymentPage from './Stripe/PaymentPage.jsx';
 import SignIn from './component/SignContainer/SignIn.jsx';
 import Login from './component/LoginContainer/Login.jsx';
-import AddBlogs from './component/BlogPanel/addBlogs.jsx';
+import AddBlogs from './component/BlogPanel/AddBlog.jsx';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
