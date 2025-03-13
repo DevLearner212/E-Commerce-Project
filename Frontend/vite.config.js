@@ -8,8 +8,8 @@ export default defineConfig({
       '/api': {
         target: 'https://e-commerce-project-dw75.onrender.com',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, ''),
-      }
+        secure: false,
+      },
       },
    },
   plugins: [react()],
