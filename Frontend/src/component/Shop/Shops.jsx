@@ -13,6 +13,7 @@ export default function Shops() {
     const { type } = location.state || { type: "default" }; // Fallback to a default value if no type is provided
     const [changeX, setchangeX] = useState(false)
     const [showfilter, setshowfilter] = useState(false)
+    const [loading,setloading] = useState(false)
 
     const { name } = useParams(); // Access the route parameter
 
@@ -29,9 +30,13 @@ export default function Shops() {
 
     const getAllproducts = useCallback(async () => {
         try {
+            setloading(true)
             const response = await axios.get("/api/v1/onsko/getAllproducts")
 
-
+            if(response.data)
+            {
+                setloading(false)
+            }
             setproduct(response.data)
             setActiveIndex('all')
         } catch (error) {
@@ -97,7 +102,7 @@ export default function Shops() {
         }
     }
 
-
+   
     return (
         <>
 
@@ -156,8 +161,8 @@ export default function Shops() {
             <div className="div w-full  md:hidden  h-auto flex flex-col  items-center gap-6">
                 {products?.map((items, i) => {
                     return <div key={i}
-                        onClick={() => navigate(`/product/${items?._id}`)}
-                        className="div relative  flex flex-col flex-shrink-0 w-72 ">
+                    onClick={() => navigate(`/product/${items?._id}`)}
+                    className="div relative  flex flex-col flex-shrink-0 w-72 ">
                         <div className="div absolute top-2 text-xs bg-[#c7dfff] p-1 left-2 text-black lg:top-5 lg:left-5">
                             Best Seller
                         </div>
@@ -168,8 +173,7 @@ export default function Shops() {
                         <span><sup>₹</sup>{items?.price}</span>
                     </div>
                 })}
-
-
+             
 
 
             </div>
@@ -256,6 +260,9 @@ export default function Shops() {
 
                 {/* Right container start from here. */}
                 <div className="right  flex flex-wrap justify-between items-start py-8 px-5 lg:px-14 md:gap-y-10      w-[80%] xl:px-0 2xl:px-0 2xl:gap-5  gap-1   ">
+
+                {loading && <div className="text-black text-5xl flex justify-center items-center w-full h-full"><img src="https://cdn-icons-png.flaticon.com/128/25/25220.png" alt="" /></div>}
+
                     {products.map((items, i) => {
 
                         return <motion.div initial={{ opacity: 0.8 }} animate={{ opacity: 1 }} transition={{ duration: 0.6 }} key={i} onClick={() => navigate(`/product/${items?._id}`)} className="div relative flex flex-col flex-shrink-0 w-60  md:w-64 lg:w-72 xl:w-[23rem] ">

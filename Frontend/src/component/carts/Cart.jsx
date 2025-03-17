@@ -175,7 +175,7 @@ export default function Cart() {
             "Content-Type": "application/json"
         }
 
-        const response = await axios.post(`http://localhost:3000/api/v1/onsko/create-checkout-session`, { products }, {
+        const response = await axios.post(`/api/v1/onsko/create-checkout-session`, { products }, {
             headers: headers,
         })
 

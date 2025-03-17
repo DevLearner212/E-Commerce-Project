@@ -118,7 +118,7 @@ export default function ProductsBuy() {
 
         try {
             const response = await axios.post(
-                `http://localhost:3000/api/v1/onsko/cart/${id}`,
+                `/api/v1/onsko/cart/${id}`,
                 {}, // body of the request (empty object if there's no body)
                 {
                     headers: {
