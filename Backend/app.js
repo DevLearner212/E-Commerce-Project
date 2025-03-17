@@ -15,7 +15,7 @@ app.use(cookieparser())
 app.use(express.static(path.join(__dirname,"/Frontend/dist")))
 
 app.use(cors({
-    origin: "https://e-commerce-project-dw75.onrender.com",
+    origin: "https://e-commerce-project-1-3om1.onrender.com",
     credentials: true
 }));
 
