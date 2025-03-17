@@ -29,7 +29,7 @@ export default function Shops() {
 
     const getAllproducts = useCallback(async () => {
         try {
-            const response = await axios.get("/api/getAllproducts")
+            const response = await axios.get("/api/v1/onsko/getAllproducts")
 
 
             setproduct(response.data)
@@ -46,7 +46,7 @@ export default function Shops() {
         setActiveIndex(type)
 
         try {
-            const response = await axios.get(`http://localhost:3000/api/v1/onsko/getProducts/${type}`)
+            const response = await axios.get(`/api/v1/onsko/getProducts/${type}`)
             // console.log(response.data?.body)
             if (type === "body") {
 

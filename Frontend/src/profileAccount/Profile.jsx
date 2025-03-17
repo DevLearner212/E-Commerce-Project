@@ -14,7 +14,7 @@ export default function Profile() {
     }, [navigate])
     const removeAccound = async () => {
         try {
-            const response = await axios.post("/api/logout")
+            const response = await axios.post("/api/v1/onsko/logout")
 
             if (response.data?.success == true) {
                 localStorage.removeItem('token');

@@ -24,7 +24,7 @@ export default function ProductsBuy() {
     const handleRating = async (newRating) => {
         setRating(newRating);
         try {
-            const response = await axios.post(`/api/updaterating/${id}`, { rating: newRating })
+            const response = await axios.post(`/api/v1/onsko/updaterating/${id}`, { rating: newRating })
             if (response.data.sucess == true) {
                 alert("done rating..")
             }
@@ -45,7 +45,7 @@ export default function ProductsBuy() {
 
     const getproduct = async () => {
         try {
-            const response = await axios.get(`http://localhost:3000/api/v1/onsko/getProductById/${id}`)
+            const response = await axios.get(`/api/v1/onsko/getProductById/${id}`)
 
 
             setproduct(response.data)
@@ -61,7 +61,7 @@ export default function ProductsBuy() {
 
 
         try {
-            const response = await axios.get(`http://localhost:3000/api/v1/onsko/getProducts/${type}`)
+            const response = await axios.get(`/api/v1/onsko/getProducts/${type}`)
             // console.log(response.data?.body)
             if (type === "body") {
 

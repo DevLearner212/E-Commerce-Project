@@ -26,7 +26,7 @@ export default function Login() {
     const userlogin = async (e) => {
         validateForm();
         try {
-            const response = await axios.post("/api/login", { email, password });
+            const response = await axios.post("/api/v1/onsko/login", { email, password });
     
             if (response.data?.success === true && response.data?.token) {
                 const token = response?.data?.token;

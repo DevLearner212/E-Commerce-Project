@@ -12,7 +12,7 @@ export default function StripeInti() {
     useEffect(() => {
         const fetchClientSecret = async () => {
             try {
-                const response = await axios.post('http://localhost:3000/api/create-payment-intent');
+                const response = await axios.post('/api/v1/onsko/create-payment-intent');
                 setClientSecret(response.data.clientSecret);
                 setLoading(false);
             } catch (error) {
@@ -32,7 +32,7 @@ export default function StripeInti() {
         const { error } = await stripe.confirmPayment({
             elements,
             confirmParams: {
-                return_url: 'http://localhost:3000/payment-success',
+                return_url: 'https://e-commerce-project-dw75.onrender.com/payment-success',
             },
         });
 

@@ -9,7 +9,7 @@ export default function Blog() {
     const navigate = useNavigate()
     const getblogposts = useCallback(async () => {
         try {
-            const response = await axios.get('/api/getblogs')
+            const response = await axios.get('/api/v1/onsko/getblogs')
             setpostdata([...response.data])
         } catch (error) {
             console.log(error.message);

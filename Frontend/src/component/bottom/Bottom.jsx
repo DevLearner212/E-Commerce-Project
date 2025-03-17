@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import Homes from '../Home/Homes';
 import LastFile from '../wrong/LastFile';
 import { motion } from 'framer-motion';
-import api from '../../axios';
+// import api from '../../axios';
 
 export default function Bottom() {
     const navigate = useNavigate();
@@ -14,8 +14,10 @@ export default function Bottom() {
     const getSellerProduct = useCallback(async () => {
         setLoading(true); // Set loading to true before the request
         try {
-            const response = await axios.get('https://e-commerce-project-dw75.onrender.com/getAllproducts'); 
+            const response = await axios.get('/api/v1/onsko/getAllproducts'); 
             setProduct(response.data);
+            
+            
         } catch (error) {
             console.error(error.message);
             // Handle error appropriately, possibly with a component

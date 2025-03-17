@@ -34,7 +34,7 @@ export default function SignIn() {
           formData.append('password', password);
           formData.append('profileImage', profileImage);
       
-          const response = await axios.post('/api/signin', formData, {
+          const response = await axios.post('/api/v1/onsko/signin', formData, {
             headers: {
               'Content-Type': 'multipart/form-data',
             },

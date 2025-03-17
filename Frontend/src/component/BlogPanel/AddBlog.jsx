@@ -20,7 +20,7 @@ export default function AddBlogs() {
                 formData.append('ImageFile', ImageFile);
             }
 
-            const response = await axios.post("/api/blogs", formData)
+            const response = await axios.post("/api/v1/onsko/blogs", formData)
             if (response.data?.success == true) {
                 navigate("/blog")
             }
