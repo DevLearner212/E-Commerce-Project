@@ -8,7 +8,7 @@ import Swal from 'sweetalert2';
 export default function Login() {
     const [email, setemail] = useState()
     const [password, setpassword] = useState()
- 
+    const [Loading,setloadng] = useState(false)
     const [errorMessage, setErrorMessage] = useState('');
     const [emailError, setEmailError] = useState(false);
     const [passwordError, setPasswordError] = useState(false);
@@ -23,7 +23,16 @@ export default function Login() {
         localStorage.setItem('tokenExpiration', expirationTime.toString());
     };
 
+    
     const userlogin = async (e) => {
+      if(Loading == false)
+        {
+            Swal.fire({
+              imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/b/b1/Loading_icon.gif',
+              text: 'It take few seconds...',
+              timer: 2000,
+              showConfirmButton: false,})
+        }
         validateForm();
         try {
             const response = await axios.post("/api/v1/onsko/login", { email, password });
@@ -31,7 +40,7 @@ export default function Login() {
             if (response.data?.success === true && response.data?.token) {
                 const token = response?.data?.token;
                 storeToken(token);
-    
+                  setloadng(true)
                 Swal.fire({
                     icon: 'success',
                     title: 'Login Successful!',

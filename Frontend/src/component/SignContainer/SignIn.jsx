@@ -4,6 +4,7 @@ import axios from 'axios'
 import { useNavigate } from 'react-router';
 export default function SignIn() {
     const [email, setemail] = useState(null)
+    const [loading,setloading] = useState(false)
     const [password, setpassword] = useState(null)
     const [fullname, setfullname] = useState(null)
     const [profileImage, setprofileImage] = useState(null);
@@ -17,55 +18,114 @@ export default function SignIn() {
     };
 
     const HandleSignIn = async (e) => {
-        e.preventDefault();
-      
-        try {
-          if (!fullname || !email || !password || !profileImage) {
-            return Swal.fire({
+      e.preventDefault();
+  
+      if (!fullname || !email || !password || !profileImage) {
+          return Swal.fire({
               icon: 'warning',
               title: 'Missing Fields',
               text: 'Please fill out all fields, including uploading a profile image!',
-            });
-          }
-      
+          });
+      }
+  
+      if (!loading) {
+          Swal.fire({
+              title: 'It takes a few seconds...',
+              imageUrl: '/loadingIcons.gif',
+              timer: 2000,
+              showConfirmButton: false,
+          });
+      }
+  
+      try {
           const formData = new FormData();
           formData.append('fullname', fullname);
           formData.append('email', email);
           formData.append('password', password);
           formData.append('profileImage', profileImage);
-      
+  
           const response = await axios.post('/api/v1/onsko/signin', formData, {
-            headers: {
-              'Content-Type': 'multipart/form-data',
-            },
+              headers: { 'Content-Type': 'multipart/form-data' }
           });
-      
-          if (response.status === 201 || response.data?.success) {
-            Swal.fire({
-              icon: 'success',
-              title: 'Account Created!',
-              text: 'You have successfully signed up. Redirecting to login...',
-              timer: 2000,
-              showConfirmButton: false,
-            });
-      
-            setTimeout(() => {
+  
+          if (response.status === 201) {
+              setloading(true);
+              Swal.fire({
+                  icon: 'success',
+                  title: 'Account Created!',
+                  text: 'You have successfully signed up. Redirecting to login...',
+                  timer: 2000,
+                  showConfirmButton: false,
+              });
               navigate('/login');
-            }, 2000);
-          } else {
-            throw new Error(response.data?.message || 'Unexpected error occurred.');
           }
-        } catch (error) {
+  
+      } catch (error) {
           console.error('Sign-in error:', error);
-      
-          Swal.fire({
-            icon: 'error',
-            title: 'Sign-Up Failed',
-            text: error.response?.data?.message || 'Something went wrong. Please try again.',
-          });
-        }
-      };
-
+  
+          if (error.response) {
+              const { status, data } = error.response;
+  
+              switch (status) {
+                  case 400:
+                      Swal.fire({
+                          icon: 'error',
+                          title: 'Bad Request',
+                          text: data?.message || 'Invalid input. Please check your details.',
+                      });
+                      break;
+  
+                  case 401:
+                      Swal.fire({
+                          icon: 'error',
+                          title: 'Unauthorized',
+                          text: data?.message || 'Incorrect credentials. Please try again.',
+                      });
+                      break;
+  
+                  case 403:
+                      Swal.fire({
+                          icon: 'error',
+                          title: 'Forbidden',
+                          text: data?.message || 'You are not allowed to perform this action.',
+                      });
+                      break;
+  
+                  case 409:  // Conflict (User already exists)
+                      Swal.fire({
+                          icon: 'warning',
+                          title: 'User Already Exists',
+                          text: data?.message || 'An account with this email already exists. Please log in.',
+                      });
+                      break;
+  
+                  case 500:
+                      Swal.fire({
+                          icon: 'error',
+                          title: 'Server Error',
+                          text: data?.message || 'Something went wrong on our end. Please try again later.',
+                      });
+                      break;
+  
+                  default:
+                      Swal.fire({
+                          icon: 'error',
+                          title: 'Unexpected Error',
+                          text: data?.message || 'Something went wrong. Please try again.',
+                      });
+                      break;
+              }
+          } else {
+              Swal.fire({
+                  icon: 'error',
+                  title: 'Network Error',
+                  text: 'Please check your internet connection and try again.',
+              });
+          }
+      }
+  };
+  
+    
     return (
 
         
@@ -74,6 +134,7 @@ export default function SignIn() {
             <div>
               <img 
                 src="https://storage.googleapis.com/devitary-image-host.appspot.com/15846435184459982716-LogoMakr_7POjrN.png" 
+        
                 alt="Logo" 
                 className="w-32 mx-auto" 
               />

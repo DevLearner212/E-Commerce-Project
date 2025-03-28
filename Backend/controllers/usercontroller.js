@@ -81,19 +81,19 @@ const productStore = async (req, res) => {
 
 const signin = async (req, res) => {
     try {
-        const { fullname, email, password } = req.body
+        const { fullname, email, password } = req.body;
 
-        const isUserExist = await user.findOne({ email })
+        // Check if user already exists
+        const isUserExist = await user.findOne({ email });
         if (isUserExist) {
-            res.json({ message: "User already exist...", success: false })
-            return
+            return res.status(409).json({ message: "User already exists. Please log in or use a different email.", success: false });
         }
 
+        // Check if file is uploaded
         const file = req.file;
         if (!file) {
-            return res.status(400).json({ message: 'No file uploaded' });
+            return res.status(400).json({ message: 'No profile image uploaded. Please upload an image.', success: false });
         }
-
 
         let response;
         try {
@@ -103,9 +103,10 @@ const signin = async (req, res) => {
             });
         } catch (uploadError) {
             console.error('ImageKit upload failed:', uploadError.message);
-            return res.status(500).send('Failed to upload image.');
+            return res.status(500).json({ message: 'Failed to upload image. Please try again later.', success: false });
         }
 
+        // Create new user
         const userData = await user.create({
             fullname,
             email,
@@ -113,17 +114,24 @@ const signin = async (req, res) => {
             address: "",
             phone: "",
             profileImage: response.url,
-        })
+        });
+
         if (!userData) {
-            res.json({ message: "user not register...", success: false })
+            return res.status(500).json({ message: "Failed to create user. Please try again.", success: false });
         }
 
-        res.json({ message: "successfully created...", success: true, userData })
+        res.status(201).json({
+            message: "Account successfully created!",
+            success: true,
+            userData
+        });
+
     } catch (error) {
-        console.log(error.message);
-        res.json({ message: "something went wrong", })
+        console.error(error.message);
+        res.status(500).json({ message: "Something went wrong. Please try again later.", success: false });
     }
-}
+};
+
 const login = async (req, res) => {
 
     try {
