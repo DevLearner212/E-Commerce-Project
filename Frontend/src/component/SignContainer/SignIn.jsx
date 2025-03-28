@@ -48,16 +48,25 @@ export default function SignIn() {
               headers: { 'Content-Type': 'multipart/form-data' }
           });
   
-          if (response.status === 201) {
+          // Check backend status codes from the JSON response
+          const { status, data } = response;
+  
+          if (data.success) {
               setloading(true);
               Swal.fire({
                   icon: 'success',
                   title: 'Account Created!',
-                  text: 'You have successfully signed up. Redirecting to login...',
+                  text: data.message || 'You have successfully signed up. Redirecting to login...',
                   timer: 2000,
                   showConfirmButton: false,
               });
               navigate('/login');
+          } else {
+              Swal.fire({
+                  icon: 'error',
+                  title: 'Failed',
+                  text: data.message || 'Something went wrong. Please try again.',
+              });
           }
   
       } catch (error) {
@@ -66,55 +75,12 @@ export default function SignIn() {
           if (error.response) {
               const { status, data } = error.response;
   
-              switch (status) {
-                  case 400:
-                      Swal.fire({
-                          icon: 'error',
-                          title: 'Bad Request',
-                          text: data?.message || 'Invalid input. Please check your details.',
-                      });
-                      break;
+              Swal.fire({
+                  icon: status >= 400 && status < 500 ? 'warning' : 'error',
+                  title: `Error ${status}`,
+                  text: data?.message || 'Something went wrong. Please try again later.',
+              });
   
-                  case 401:
-                      Swal.fire({
-                          icon: 'error',
-                          title: 'Unauthorized',
-                          text: data?.message || 'Incorrect credentials. Please try again.',
-                      });
-                      break;
-  
-                  case 403:
-                      Swal.fire({
-                          icon: 'error',
-                          title: 'Forbidden',
-                          text: data?.message || 'You are not allowed to perform this action.',
-                      });
-                      break;
-  
-                  case 409:  // Conflict (User already exists)
-                      Swal.fire({
-                          icon: 'warning',
-                          title: 'User Already Exists',
-                          text: data?.message || 'An account with this email already exists. Please log in.',
-                      });
-                      break;
-  
-                  case 500:
-                      Swal.fire({
-                          icon: 'error',
-                          title: 'Server Error',
-                          text: data?.message || 'Something went wrong on our end. Please try again later.',
-                      });
-                      break;
-  
-                  default:
-                      Swal.fire({
-                          icon: 'error',
-                          title: 'Unexpected Error',
-                          text: data?.message || 'Something went wrong. Please try again.',
-                      });
-                      break;
-              }
           } else {
               Swal.fire({
                   icon: 'error',
