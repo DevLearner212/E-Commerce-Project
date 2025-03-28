@@ -661,7 +661,7 @@ const getreview = async (req, res) => {
   
       // Fetch reviews with populated user and product details
       const reviews = await Review.find({ productID: id })
-        .populate('userID', 'fullname email profilePic createdAt')  // User details
+        .populate('userID', 'fullname email profileImage createdAt')  // User details
         .populate('productID', 'name')                              // Product details
         .select('comment rating createdAt');
   
@@ -683,7 +683,7 @@ const getreview = async (req, res) => {
         user: {
           name: review.userID.fullname,
           email: review.userID.email,
-          profilePic: review.userID.profilePic,
+          profilePic: review.userID.profileImage,
         }
       }));
   
