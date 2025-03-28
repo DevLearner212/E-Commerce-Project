@@ -415,7 +415,7 @@ const createCart = async (req, res) => {
 
         // Verify the JWT token
         // Find the user's cart
-        let cart = await Cart.findOne({ user: req.user.id });
+        let cart = await Cart.findOne({ user: req.user });
         const product = await Product.findById(req.params.id)
         if (!cart) {
             cart = await Cart.create({ user: req.user?.id, products: [{ product: req.params.id }], totalPrice: product?.price })
