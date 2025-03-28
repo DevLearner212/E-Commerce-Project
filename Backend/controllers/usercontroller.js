@@ -11,6 +11,7 @@ import paypal from 'paypal-rest-sdk';
 import Order from '../models/Order.models.js'
 import Stripe from 'stripe';
 import Review from '../models/Review.models.js'
+import mongoose from 'mongoose'
 const stripe = new Stripe('sk_test_51QGeC3GCVUDiMIBN5AePLZ76YUKbhPKGWmCiMPK0D8xTFHEWjrsycYf3cBMTiV2QkS7wKAoieKLQMSVBdFCYBQJK00APfT1b3R'); // Secret Key
 
 const productStore = async (req, res) => {
@@ -623,8 +624,8 @@ const uploadReview = async (req, res) => {
     try {
         const { id } = req.params; // Product ID
         const { review } = req.body;
-        const user = req.user; // Assuming you're using auth middleware to attach user to req
-
+        const userId = req.user; // Assuming you're using auth middleware to attach user to req
+        
         if (!id) {
             return res.json({ message: "Product ID not found", success: false });
         }
@@ -637,29 +638,79 @@ const uploadReview = async (req, res) => {
             return res.status(401).json({ message: "Unauthorized", success: false });
         }
 
-        const product = await Product.findById(id);
-
-        if (!product) {
-            return res.json({ message: "Product not found", success: false });
+        const userReview = await Review.create({
+            productID:id,
+            userID:userId,
+            comment:review
+        })
+        if(!userReview)
+        {
+            return res.status(400).json({ message: "userReview not created...", success: false });
         }
-
-        // Add new review
-        const newReview = {
-            user: user._id,
-            comment: review,
-            date: new Date()
-        } ;
-
-        product.reviews.push(newReview);
-
-        await product.save();
-
-        res.json({ message: "Review added successfully", success: true, product });
+       
+        res.json({ message: "Review added successfully", success: true, userReview });
     } catch (error) {
         console.error(error.message);
         res.status(500).json({ message: "Something went wrong", success: false });
     }
 };
 
+const getreview = async (req, res) => {
+    try {
+      const { id } = req.params;
+  
+      // Fetch reviews with populated user and product details
+      const reviews = await Review.find({ productID: id })
+        .populate('userID', 'fullname email profilePic createdAt')  // User details
+        .populate('productID', 'name')                              // Product details
+        .select('comment rating createdAt');
+  
+      // Check if no reviews found
+      if (!reviews || reviews.length === 0) {
+        return res.status(404).json({ 
+          success: false, 
+          message: 'No reviews found for this product.' 
+        });
+      }
+  
+      // Formatting the response
+      const properData = reviews.map(review => ({
+        productName: review.productID.name,
+        review: {
+          comment: review.comment,
+          rating: review.rating,
+        },
+        user: {
+          name: review.userID.fullname,
+          email: review.userID.email,
+          profilePic: review.userID.profilePic,
+        }
+      }));
+  
+      res.status(200).json({
+        success: true,
+        message: 'Reviews fetched successfully.',
+        data: properData
+      });
+  
+    } catch (error) {
+      console.error(error);  // Log the error for debugging
+  
+      // Handle specific errors
+      if (error.name === 'CastError') {
+        return res.status(400).json({ 
+          success: false, 
+          message: 'Invalid product ID format.' 
+        });
+      }
+  
+      res.status(500).json({
+        success: false,
+        message: 'Internal Server Error. Please try again later.'
+      });
+    }
+  };
+  
 
-export { login, logout, uploadReview, signin, paypalpayment, verifyPayment, updateProductRating, removeallcart, getuser, productStore, createCart, removecart, blogspost, getproducts, getblogs, getAllProducts, getProductById, getcategory, getcart, admin }
+
+export { login, logout,getreview, uploadReview, signin, paypalpayment, verifyPayment, updateProductRating, removeallcart, getuser, productStore, createCart, removecart, blogspost, getproducts, getblogs, getAllProducts, getProductById, getcategory, getcart, admin }
