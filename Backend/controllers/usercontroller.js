@@ -10,6 +10,7 @@ import { paymentModel } from '../models/Payment.models.js'
 import paypal from 'paypal-rest-sdk';
 import Order from '../models/Order.models.js'
 import Stripe from 'stripe';
+import Review from '../models/Review.models.js'
 const stripe = new Stripe('sk_test_51QGeC3GCVUDiMIBN5AePLZ76YUKbhPKGWmCiMPK0D8xTFHEWjrsycYf3cBMTiV2QkS7wKAoieKLQMSVBdFCYBQJK00APfT1b3R'); // Secret Key
 
 const productStore = async (req, res) => {
@@ -133,54 +134,81 @@ const signin = async (req, res) => {
 };
 
 const login = async (req, res) => {
-
     try {
-        const { email, password } = req.body
+        const { email, password } = req.body;
+
         const requirebody = z.object({
             email: z.string().min(3).max(100).email(),
             password: z.string().min(8).max(50),
-        })
-        const parseDataSuccess = requirebody.safeParse(req.body)
+        });
+
+        const parseDataSuccess = requirebody.safeParse(req.body);
+
         if (!parseDataSuccess.success) {
-            console.log(parseDataSuccess.error.message)
-            res.json({ message: "Incorrect formate", error: parseDataSuccess.error, })
-            return
-
+            console.log(parseDataSuccess.error.message);
+            return res.status(400).json({
+                statusCode: 400,   // ✅ Include status code in response body
+                message: "Invalid input format.",
+                error: parseDataSuccess.error,
+            });
         }
 
+        const userexist = await user.findOne({ email });
 
-        const userexist = await user.findOne({ email })
         if (!userexist) {
-            res.json({ message: "email or password incorrect.", success: false })
-            return
+            return res.status(404).json({
+                statusCode: 404,   // ✅ Include status code in response body
+                message: "User not found. Please check your credentials.",
+                success: false,
+            });
         }
-        const isMatchPassword = await userexist.comparePassword(password)
+
+        const isMatchPassword = await userexist.comparePassword(password);
+
         if (!isMatchPassword) {
-            res.json({ message: "password incorrect.", success: false })
-            return
+            return res.status(401).json({
+                statusCode: 401,   // ✅ Include status code in response body
+                message: "Incorrect password.",
+                success: false,
+            });
         }
 
-        const token = await userexist.generateToken()
+        const token = await userexist.generateToken();
+
         if (!token) {
-            res.json({ message: "Token is not generated", success: false })
-            return;
+            return res.status(500).json({
+                statusCode: 500,   // ✅ Include status code in response body
+                message: "Token generation failed.",
+                success: false,
+            });
         }
-        const option = [{
 
+        const options = {
             httpOnly: true,
             secure: true,
-        }
-        ]
-        return res.cookie("token", token, option).json({ message: "Login successfully...", userexist, success: true, token })
+        };
+
+        return res
+            .status(200)
+            .cookie("token", token, options)
+            .json({
+                statusCode: 200,    // ✅ Include status code in response body
+                message: "Login successful!",
+                success: true,
+                token,
+                userexist,
+            });
+
     } catch (error) {
-        console.log(error.message);
-        res.json({ message: "something went wrong", success: false })
-
+        console.error(error.message);
+        return res.status(500).json({
+            statusCode: 500,   // ✅ Include status code in response body
+            message: "Internal server error.",
+            success: false,
+        });
     }
+};
 
-
-
-}
 
 const logout = async (req, res) => {
     try {
@@ -618,10 +646,9 @@ const uploadReview = async (req, res) => {
         // Add new review
         const newReview = {
             user: user._id,
-            name: user.name,
-            review: review,
+            comment: review,
             date: new Date()
-        };
+        } ;
 
         product.reviews.push(newReview);
 
