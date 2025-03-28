@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
+import Swal from 'sweetalert2';
 import axios from 'axios'
 export default function Profile() {
     const navigate = useNavigate()
@@ -12,21 +13,81 @@ export default function Profile() {
             navigate("/")
         }
     }, [navigate])
-    const removeAccound = async () => {
+    const removeAccount = async () => {
         try {
-            const response = await axios.post("/api/v1/onsko/logout")
-
-            if (response.data?.success == true) {
+            const response = await axios.post("/api/v1/onsko/logout");
+    
+            if (response.status === 200 && response.data?.success) {
+                // Clear local storage
                 localStorage.removeItem('token');
                 localStorage.removeItem('tokenExpiration');
-                navigate("/")
+                
+                // Show success message
+                await Swal.fire({
+                    icon: 'success',
+                    title: 'Logged Out',
+                    text: 'You have been successfully logged out.',
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+                
+                // Redirect to home
+                navigate("/login");
+                return;
             }
-
+    
+            // Handle API success=false cases
+            throw new Error(response.data?.message || "Logout operation failed");
+    
         } catch (error) {
-            console.log(error.message)
-
+            let errorTitle = "Error";
+            let errorMessage = "An unexpected error occurred. Please try again.";
+            let icon = 'error';
+    
+            if (error.response) {
+                // Server responded with error status
+                switch (error.response.status) {
+                    case 401:
+                        errorTitle = "Session Expired";
+                        errorMessage = "Your session has expired. Please login again.";
+                        icon = 'warning';
+                        break;
+                    case 403:
+                        errorTitle = "Access Denied";
+                        errorMessage = "You don't have permission to perform this action.";
+                        break;
+                    case 500:
+                        errorTitle = "Server Error";
+                        errorMessage = "Our servers are experiencing issues. Please try again later.";
+                        break;
+                    default:
+                        errorMessage = error.response.data?.message || 
+                                      `Request failed with status code ${error.response.status}`;
+                }
+            } else if (error.request) {
+                // No response received
+                errorTitle = "Network Error";
+                errorMessage = "Unable to connect to the server. Please check your internet connection.";
+            }
+    
+            console.error("Logout error:", error);
+    
+            // Show error alert
+            await Swal.fire({
+                icon,
+                title: errorTitle,
+                text: errorMessage,
+                confirmButtonColor: '#3085d6',
+            });
+    
+            // Force logout if authentication error
+            if (error.response?.status === 401 || error.response?.status === 403) {
+                localStorage.removeItem('token');
+                localStorage.removeItem('tokenExpiration');
+                navigate("/login");
+            }
         }
-    }
+    };
     return (
         <>
             <div>
@@ -36,7 +97,7 @@ export default function Profile() {
                     <h1 className='text-center text-xl font-semibold'>Dev Kumar saini</h1>
                     <p className='text-center text-xs tracking-tighter font-medium'> devsaini27806@gmail.com</p>
                     <button
-                        onClick={removeAccound}
+                        onClick={removeAccount}
 
                         className="bg-red-500 text-white font-semibold py-1 px-4 rounded-lg shadow hover:bg-red-600 transition duration-200 ease-in-out"
                     >

@@ -8,7 +8,7 @@ import Swal from 'sweetalert2';
 export default function Login() {
     const [email, setemail] = useState()
     const [password, setpassword] = useState()
-    const [Loading,setloadng] = useState(false)
+    const [loading,setLoading] = useState(false)
     const [errorMessage, setErrorMessage] = useState('');
     const [emailError, setEmailError] = useState(false);
     const [passwordError, setPasswordError] = useState(false);
@@ -24,68 +24,76 @@ export default function Login() {
     };
 
     
-    const userlogin = async (e) => {
-      if(Loading == false)
-        {
-            Swal.fire({
-              imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/b/b1/Loading_icon.gif',
-              text: 'It take few seconds...',
+    const userLogin = async (e) => {
+     
+      e.preventDefault();
+  
+      if (  !email || !password ) {
+          return Swal.fire({
+              icon: 'warning',
+              title: 'Missing Fields',
+              text: 'Please fill out all fields, including uploading a profile image!',
+          });
+      }
+  
+      if (!loading) {
+          Swal.fire({
+              title: 'It takes a few seconds...',
+              imageUrl: '/loadingIcons.gif',
               timer: 2000,
-              showConfirmButton: false,})
-        }
-        validateForm();
-        try {
-            const response = await axios.post("/api/v1/onsko/login", { email, password });
-    
-            if (response.data?.success === true && response.data?.token) {
-                const token = response?.data?.token;
-                storeToken(token);
-                  setloadng(true)
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Login Successful!',
-                    text: 'Welcome back! Redirecting to your dashboard...',
-                    timer: 2000,
-                    showConfirmButton: false,
-                });
-    
-                setTimeout(() => {
-                    navigate("/");
-                }, 2000);
-            } else {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Login Failed',
-                    text: response.data?.message || 'Invalid credentials. Please try again.',
-                });
-            }
-        } catch (error) {
-            console.error(error.message);
-    
-            let errorMessage = 'Something went wrong. Please try again later.';
-            if (error.response) {
-                // Server responded with a status code outside the 2xx range
-                const status = error.response.status;
-                if (status === 400) {
-                    errorMessage = 'Bad request. Please check your inputs.';
-                } else if (status === 401) {
-                    errorMessage = 'Unauthorized. Invalid email or password.';
-                } else if (status === 500) {
-                    errorMessage = 'Server error. Please try again later.';
-                }
-            } else if (error.request) {
-                errorMessage = 'No response from server. Please check your network.';
-            }
-    
-            Swal.fire({
-                icon: 'error',
-                title: 'Login Error',
-                text: errorMessage,
-            });
-        }
+              showConfirmButton: false,
+          });
+      }
+  
+      try {
+ 
+          const response = await axios.post('/api/v1/onsko/login', {email,password});
+  
+          // Check backend status codes from the JSON response
+          const { status, data } = response;
+          
+  
+          if (data.success) {
+              setLoading(true);
+              storeToken(data.token)
+              Swal.fire({
+                  icon: 'success',
+                  title: 'Account Created!',
+                  text: data.message || 'You have successfully signed up. Redirecting to login...',
+                  timer: 2000,
+                  showConfirmButton: false,
+              });
+              navigate('/');
+          } else {
+              Swal.fire({
+                  icon: 'error',
+                  title: 'Failed',
+                  text: data.message || 'Something went wrong. Please try again.',
+              });
+          }
+  
+      } catch (error) {
+          console.error('Sign-in error:', error);
+  
+          if (error.response) {
+              const { status, data } = error.response;
+  
+              Swal.fire({
+                  icon: status >= 400 && status < 500 ? 'warning' : 'error',
+                  title: `Error ${status}`,
+                  text: data?.message || 'Something went wrong. Please try again later.',
+              });
+  
+          } else {
+              Swal.fire({
+                  icon: 'error',
+                  title: 'Network Error',
+                  text: 'Please check your internet connection and try again.',
+              });
+          }
+      }
+     
     };
-
-
     const validateForm = () => {
         const emailIsValid = /\S+@\S+\.\S+/.test(email);
 
@@ -196,7 +204,7 @@ export default function Login() {
                   type="password" 
                   placeholder="Password" 
                 />
-                <button onClick={userlogin} className="mt-5 tracking-wide font-semibold bg-indigo-500 text-gray-100 w-full py-4 rounded-lg hover:bg-indigo-700 transition-all duration-300 ease-in-out flex items-center justify-center focus:outline-none focus:shadow-outline">
+                <button onClick={userLogin} className="mt-5 tracking-wide font-semibold bg-indigo-500 text-gray-100 w-full py-4 rounded-lg hover:bg-indigo-700 transition-all duration-300 ease-in-out flex items-center justify-center focus:outline-none focus:shadow-outline">
                   <span className="ml-3">Sign Up</span>
                 </button>
                 <p className="mt-6 text-xs text-gray-600 text-center">
